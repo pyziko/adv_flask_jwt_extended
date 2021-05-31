@@ -2,21 +2,27 @@ from flask_restful import Resource, reqparse
 from flask_jwt_extended import jwt_required, get_jwt, get_jwt_identity
 from models.item import ItemModel
 
+ITEM_DELETED = "Item deleted"
+ERROR_INSERTING = "An Error occurred inserting the item"
+NAME_ALREADY_EXIST = "An item with name '{}' already exist"
+ITEM_NOT_FOUND = "Item not found"
+BLANK_ERROR = "'{}' cannot be left blank."
+
 
 class Item(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument(
-        "price", type=float, required=True, help="This field cannot be left blank"
+        "price", type=float, required=True, help=BLANK_ERROR.format("price")
     )
     parser.add_argument(
-        "store_id", type=int, required=True, help="Every item needs a store id"
+        "store_id", type=int, required=True, help=BLANK_ERROR.format("store_id")
     )
 
     def get(self, name: str):
         item = ItemModel.find_by_name(name)
         if item:
             return item.json()
-        return {"message": "Item not found"}, 404
+        return {"message": ITEM_NOT_FOUND}, 404
 
     # This ensures that a new item can be created wen u just logged in- fresh_toke_required
     # NOTE the parameter fresh, not refresh
@@ -24,7 +30,7 @@ class Item(Resource):
     @jwt_required(fresh=True)
     def post(self, name: str):
         if ItemModel.find_by_name(name):
-            return {"message": f"An item with name '{name}' already exist"}, 400
+            return {"message": NAME_ALREADY_EXIST.format(name)}, 400
 
         data = Item.parser.parse_args()
 
@@ -33,7 +39,7 @@ class Item(Resource):
             item.save_to_db()
             print("ITEM DATA:=>  ", item.name, item.price, sep=", ")
         except:
-            return {"message": "An Error occurred inserting the item"}, 500  # Internal Server Error
+            return {"message": ERROR_INSERTING}, 500  # Internal Server Error
 
         return item.json(), 201
 
@@ -42,8 +48,8 @@ class Item(Resource):
         item = ItemModel.find_by_name(name)
         if item:
             item.delete_from_db()
-
-        return {"message": "Item deleted"}
+            return {"message": ITEM_DELETED}
+        return {"message": ITEM_NOT_FOUND}
 
     def put(self, name: str):
         data = Item.parser.parse_args()
