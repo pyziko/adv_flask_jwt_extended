@@ -18,7 +18,8 @@ class Item(Resource):
         "store_id", type=int, required=True, help=BLANK_ERROR.format("store_id")
     )
 
-    def get(self, name: str):
+    @classmethod
+    def get(cls, name: str):
         item = ItemModel.find_by_name(name)
         if item:
             return item.json()
@@ -43,15 +44,17 @@ class Item(Resource):
 
         return item.json(), 201
 
+    @classmethod    # this mus come first
     @jwt_required()
-    def delete(self, name: str):
+    def delete(cls, name: str):
         item = ItemModel.find_by_name(name)
         if item:
             item.delete_from_db()
             return {"message": ITEM_DELETED}
         return {"message": ITEM_NOT_FOUND}
 
-    def put(self, name: str):
+    @classmethod
+    def put(cls, name: str):
         data = Item.parser.parse_args()
 
         item = ItemModel.find_by_name(name)
@@ -79,5 +82,6 @@ class ItemList(Resource):
     #         "items": [item["name"] for item in items],
     #         "message": "More data available if you login."
     #     }, 200
-    def get(self):
+    @classmethod
+    def get(cls):
         return {"items": [item.json() for item in ItemModel.find_all()]}, 200

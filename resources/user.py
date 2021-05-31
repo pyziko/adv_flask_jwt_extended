@@ -26,7 +26,8 @@ _user_parser.add_argument("password", type=str, required=True, help=BLANK_ERROR.
 
 
 class UserRegister(Resource):  # todo INFO: remember to add it as a resource
-    def post(self):
+    @classmethod
+    def post(cls):
         data = _user_parser.parse_args()
 
         if UserModel.find_by_username(data["username"]):
@@ -78,8 +79,9 @@ class UserLogin(Resource):
 
 # we should blacklist jwt, not user_id or username, except we hate that user
 class UserLogout(Resource):
+    @classmethod
     @jwt_required()
-    def post(self):
+    def post(cls):
         # jti >>> jwt id, unique id for jwt
         jti = get_jwt()["jti"]
         BLACKLIST_LOGOUT.add(jti)
@@ -92,8 +94,9 @@ class UserLogout(Resource):
 # so they don't have to keep entering their password
 # so this refresh token produces an access_token which is not fresh for user to use
 class TokenRefresh(Resource):
+    @classmethod
     @jwt_required(refresh=True)
-    def post(self):
+    def post(cls):
         current_user = get_jwt()
         new_token = create_access_token(identity=current_user, fresh=False)
         return {"access_token": new_token}, 200
