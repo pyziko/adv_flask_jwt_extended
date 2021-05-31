@@ -1,7 +1,12 @@
 import datetime
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from db import db
+
+# CUSTOM JSON TYPES
+# giving detailed description as to what our JSON will return
+# JSON below has key str, but value ::: str, float and int, hence we can consolidate with Union
+ItemJSON = Dict[str, Union[int, str, float]]
 
 
 class ItemModel(db.Model):
@@ -20,13 +25,13 @@ class ItemModel(db.Model):
         self.price = price
         self.store_id = store_id
 
-    def json(self) -> Dict:
+    def json(self) -> ItemJSON:
         return {"id": self.id, "name": self.name, "price": self.price, "store_id": self.store_id,
                 "request_id": self.request_id}
 
     @classmethod
     def find_by_name(cls, name: str) -> "ItemModel":
-        return cls.query.filter_by(name=name).first()     # SELECT * FROM items WHERE name=name LIMIT 1
+        return cls.query.filter_by(name=name).first()  # SELECT * FROM items WHERE name=name LIMIT 1
 
     @classmethod
     def find_all(cls) -> List:
