@@ -1,8 +1,11 @@
 import hmac
 
-from flask_jwt_extended import (create_access_token,
-                                create_refresh_token,
-                                jwt_required, get_jwt)
+from flask_jwt_extended import (
+    create_access_token,
+    create_refresh_token,
+    jwt_required,
+    get_jwt,
+)
 from flask_restful import Resource, reqparse
 
 from blacklist import BLACKLIST_LOGOUT
@@ -14,7 +17,6 @@ _user_parser.add_argument("password", type=str, required=True, help="This field 
 
 
 class UserRegister(Resource):  # todo INFO: remember to add it as a resource
-
     def post(self):
         data = _user_parser.parse_args()
 
@@ -46,25 +48,21 @@ class User(Resource):
 
 # using flask_jwt rather than flask_jwt_extended
 class UserLogin(Resource):
-
     @classmethod
     def post(cls):
         # get data from parse
         data = _user_parser.parse_args()
 
         # find user in database
-        user = UserModel.find_by_username(data['username'])
+        user = UserModel.find_by_username(data["username"])
 
         # check password --> this is what the 'authenticate' function used to do
-        if user and hmac.compare_digest(user.password, data['password']):
+        if user and hmac.compare_digest(user.password, data["password"]):
             # identity= is what the identity function used to do
             # we can use username, i.e identity=username here rather than user_id
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
-            return {
-                       'access_token': access_token,
-                       'refresh_token': refresh_token
-                   }, 200
+            return {"access_token": access_token, "refresh_token": refresh_token}, 200
 
         return {"message": "Invalid credentials"}, 401
 

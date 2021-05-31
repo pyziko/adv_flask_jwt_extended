@@ -8,11 +8,11 @@ from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["PROPAGATE_EXCEPTIONS"] = True
 # app.config['JWT_HEADER_TYPE'] = 'Token'  # change Bearer prefix
-app.secret_key = 'pyziko'
+app.secret_key = "pyziko"
 # app.config['JWT_SECRET_KEY']      # The secret key used to encode and decode JWTs if not set, app.secret_key is used
 
 # config for blacklisting  -->>> todo NO LONGER NEEDED
@@ -103,17 +103,17 @@ def check_if_token_in_blacklist(jwt_header, jwt_payload):
 #     }), 401
 
 
-api.add_resource(Store, '/store/<string:name>')
-api.add_resource(StoreList, '/stores')
-api.add_resource(Item, '/item/<string:name>')
-api.add_resource(ItemList, '/items')
-api.add_resource(UserRegister, '/register')
-api.add_resource(User, '/user/<int:user_id>')
-api.add_resource(UserLogin, '/login')
-api.add_resource(TokenRefresh, '/refresh')
-api.add_resource(UserLogout, '/logout')
+api.add_resource(Store, "/store/<string:name>")
+api.add_resource(StoreList, "/stores")
+api.add_resource(Item, "/item/<string:name>")
+api.add_resource(ItemList, "/items")
+api.add_resource(UserRegister, "/register")
+api.add_resource(User, "/user/<int:user_id>")
+api.add_resource(UserLogin, "/login")
+api.add_resource(TokenRefresh, "/refresh")
+api.add_resource(UserLogout, "/logout")
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     from db import db
 
     db.init_app(app)
