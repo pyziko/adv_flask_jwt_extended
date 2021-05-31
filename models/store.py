@@ -29,7 +29,7 @@ class StoreModel(db.Model):
         return cls.query.filter_by(name=name).first()  # SELECT * FROM items WHERE name=name LIMIT 1
 
     @classmethod
-    def find_all(cls) -> List:
+    def find_all(cls) -> List["StoreModel"]:
         return cls.query.all()
 
     def save_to_db(self) -> None:
