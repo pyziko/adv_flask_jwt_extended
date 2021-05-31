@@ -29,13 +29,13 @@ class UserRegister(Resource):  # todo INFO: remember to add it as a resource
 
 class User(Resource):
     @classmethod
-    def get(cls, user_id):
+    def get(cls, user_id: int):
         user = UserModel.find_by_id(user_id)
 
         return user.json() if user else {"message": "user not found"}, 404
 
     @classmethod
-    def delete(cls, user_id):
+    def delete(cls, user_id: int):
         user = UserModel.find_by_id(user_id)
 
         if not user:

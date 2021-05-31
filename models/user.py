@@ -1,3 +1,5 @@
+from typing import Dict
+
 from db import db
 
 
@@ -8,28 +10,28 @@ class UserModel(db.Model):
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
 
-    def __init__(self, username, password):  # we are using _id because id is a python keyword
+    def __init__(self, username: str, password: str):  # we are using _id because id is a python keyword
         self.username = username
         self.password = password
 
-    def json(self):
+    def json(self) -> Dict:
         return {
             "id": self.id,
             "username": self.username
         }
 
-    def save_to_db(self):
+    def save_to_db(self) -> None:
         db.session.add(self)
         db.session.commit()
 
-    def delete_from_db(self):
+    def delete_from_db(self) -> None:
         db.session.delete(self)
         db.session.commit()
 
     @classmethod
-    def find_by_username(cls, username):
+    def find_by_username(cls, username) -> "UserModel":
         return cls.query.filter_by(username=username).first()  # .query ==> select * from users, .filter ==> where
 
     @classmethod
-    def find_by_id(cls, _id):
+    def find_by_id(cls, _id: int) -> "UserModel":
         return cls.query.filter_by(id=_id).first()

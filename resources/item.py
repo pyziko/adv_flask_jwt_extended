@@ -8,7 +8,7 @@ class Item(Resource):
     parser.add_argument("price", type=float, required=True, help="This field cannot be left blank")
     parser.add_argument("store_id", type=int, required=True, help="Every item needs a store id")
 
-    def get(self, name):
+    def get(self, name: str):
         item = ItemModel.find_by_name(name)
         if item:
             return item.json()
@@ -18,7 +18,7 @@ class Item(Resource):
     # NOTE the parameter fresh, not refresh
     # Usage: to ensure a critical action requires user logging in or entering their password
     @jwt_required(fresh=True)
-    def post(self, name):
+    def post(self, name: str):
         if ItemModel.find_by_name(name):
             return {"message": f"An item with name '{name}' already exist"}, 400
 
@@ -41,7 +41,7 @@ class Item(Resource):
 
         return {"message": "Item deleted"}
 
-    def put(self, name):
+    def put(self, name: str):
         data = Item.parser.parse_args()
 
         item = ItemModel.find_by_name(name)

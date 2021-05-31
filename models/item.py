@@ -1,4 +1,5 @@
 import datetime
+from typing import Dict, List
 
 from db import db
 
@@ -14,24 +15,24 @@ class ItemModel(db.Model):
     store_id = db.Column(db.Integer, db.ForeignKey('stores.id'))
     store = db.relationship('StoreModel')
 
-    def __init__(self, name, price, store_id):
+    def __init__(self, name: str, price: float, store_id: int):
         self.name = name
         self.price = price
         self.store_id = store_id
 
-    def json(self):
+    def json(self) -> Dict:
         return {"id": self.id, "name": self.name, "price": self.price, "store_id": self.store_id,
                 "request_id": self.request_id}
 
     @classmethod
-    def find_by_name(cls, name):
+    def find_by_name(cls, name: str) -> "ItemModel":
         return cls.query.filter_by(name=name).first()     # SELECT * FROM items WHERE name=name LIMIT 1
 
     @classmethod
-    def find_all(cls):
+    def find_all(cls) -> List:
         return cls.query.all()
 
-    def save_to_db(self):
+    def save_to_db(self) -> None:
         db.session.add(self)
         print("BEFORE COMMIT: ->", self.id)
         db.session.commit()
@@ -40,6 +41,6 @@ class ItemModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def delete_from_db(self):
+    def delete_from_db(self) -> None:
         db.session.delete(self)
         db.session.commit()
